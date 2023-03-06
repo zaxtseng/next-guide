@@ -1,6 +1,6 @@
-import { Box, Button, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Text, Image } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import Image from "next/image";
+// import Image from "next/image";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 

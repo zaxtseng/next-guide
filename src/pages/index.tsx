@@ -1,16 +1,17 @@
-import Header from "@/components/Header";
-import Navigation from "@/components/Navigation";
+import Game from "@/components/Game";
+import { Layout } from "@/components/Layout";
 import Swiper from "@/components/Swiper";
 import { Inter } from "next/font/google";
-
+// 谷歌字体
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
     <>
-      <Header></Header>
-      <Navigation />
-      <Swiper />
+      <Layout>
+        <Swiper />
+        <Game />
+      </Layout>
     </>
   );
 }

@@ -5,6 +5,9 @@ pnpm create next-app --ts
 // 其中选择了eslint,src
 // 选择app的话,下面chakraUI并没有对应做修改,导致无法使用主题
 // 等以后修复可以使用app
+// 目前ChakraUI只工作在客户端,但是Nextjs的app文件夹又默认用于服务端组件,
+// ChakraUI提供了@chakra-ui/next-js
+// 另外使用chakraUI在服务端组件时需要在头部加上use client
 ```
 ## 文件目录(约定式路由)
 也就是每个文件夹就是一个路由.
