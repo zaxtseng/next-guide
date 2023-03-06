@@ -114,3 +114,12 @@ export default function RootLayout({
   )
 }
 ```
+# react-responsive-carousel
+使用轮播图.
+```
+pnpm add react-responsive-carousel
+```
+## 使用
+```jsx
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from 'react-responsive-carousel';
