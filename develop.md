@@ -123,6 +123,135 @@ export default function RootLayout({
 pnpm add react-responsive-carousel
 ```
 ## 使用
+react没有vue中v-deep这样的可以直接操作三方组件样式的专用方式。
+但是通过摸索，发现可以通过emotion的styled功能重新设计三方组件的样式就行。
+期间尝试过emotion的css方法直接赋值到三方组件上，不生效。
+nextjs的`<style jsx>`只能在js中生效而且不能用于服务端。
 ```jsx
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
+// 这里理解为大概率是react-responsive-carousel和nextjs不兼容导致的
+const SwiperContainer = styled(Carousel)`
+  position: relative;
+  & > .carousel:last-child {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    & > .thumbs-wrapper > .thumbs {
+      display: flex;
+      justify-content: center;
+    }
+  }
+`;
+
+const Swiper = () => {
+  return (
+      <SwiperContainer showIndicators={false} showStatus={false} showArrows={false}>
+        <div>
+          // 这里虽然想使用nextjs组件Image，但是和Carousel不兼容，无法显示缩略图
+          // 所以要么把图片裁剪好用Image,
+          <img src="/imgs/img1.png" />
+        </div>
+        <div>
+          <img src="/imgs/img2.png" />
+        </div>
+        <div>
+          <img src="/imgs/img3.png" />
+        </div>
+      </SwiperContainer>
+  );
+};
+```
+```tsx
+// 非要使用image，只能自定义缩略图
+const images = ["/imgs/img1.png", "/imgs/img2.png", "/imgs/img3.png"];
+
+const Swiper = () => {
+  // 自定义缩略图
+  const renderThumbs = () =>
+    images.map((img, idx) => (
+      <div key={idx}>
+        <Image
+          src={img}
+          alt="logo"
+          width={80}
+          height={30}
+          style={{
+            objectFit: "contain",
+          }}
+        />
+      </div>
+    ));
+
+  return (
+    <SwiperContainer
+      showIndicators={false}
+      showStatus={false}
+      showArrows={false}
+      renderThumbs={renderThumbs}
+    >
+      <div>
+        <Image
+          src="/imgs/img1.png"
+          alt="image1"
+          width={1920}
+          height={1200}
+          style={{
+            maxWidth: "100%",
+            height: "700px",
+            objectFit: "cover",
+            objectPosition: "50% 20%",
+          }}
+        />
+      </div>
+      <div>
+        <Image
+          src="/imgs/img2.png"
+          alt="image1"
+          width={1920}
+          height={1200}
+          style={{
+            maxWidth: "100%",
+            height: "700px",
+            objectFit: "cover",
+            objectPosition: "50% 50%",
+          }}
+        />
+      </div>
+      <div>
+        <Image
+          src="/imgs/img3.png"
+          alt="image1"
+          width={1920}
+          height={1200}
+          style={{
+            maxWidth: "100%",
+            height: "700px",
+            objectFit: "cover",
+            objectPosition: "50% 50%",
+          }}
+        />
+      </div>
+    </SwiperContainer>
+  );
+};
+```
+# 有数据的静态生成
+需要先使用`getStaticProps`获取数据,再将数据传递到组件中,然后静态生成.
+```tsx
+// Swiper.tsx
+// 在需要获取数据的组件这里发请求
+export const loadSwiper = () => axios.get('/api/swiper', {baseURL})
+```
+在`Home.tsx`中使用`getStaticProps`.
+
+## 获取静态路由再获取数据
+为什么要这么做?
+
+因为next.js是约定式路由,文件夹就是路由.
+首先跳转到了对应的id的路由,那就需要使用`getStaticPaths`获取到路由.
+
+然后根据路由获取数据,使用`getStaticProps`获取.
+
+最后将数据再传回给当前组件.
+

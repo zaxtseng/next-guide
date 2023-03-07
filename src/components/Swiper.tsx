@@ -1,6 +1,8 @@
-import { Box, Button, Heading, Text, Image } from "@chakra-ui/react";
+import { baseURL } from "@/axiosConfig";
+import { Box, Button, Heading, Image, Text } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-// import Image from "next/image";
+import axios from "axios";
+import Link from "next/link";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
@@ -39,13 +41,21 @@ const CarouselItem = styled.div`
   }
 `;
 
-const Swiper = () => {
-  const images = ["/imgs/img1.png", "/imgs/img2.png", "/imgs/img3.png"];
+export interface ISwiper {
+  id: number;
+  title: string;
+  description: string;
+  url: string;
+  vid: number;
+}
+
+const Swiper = ({ data }: { data: ISwiper[] }) => {
+  // console.log('data: ', data);
   const renderThumbs = () =>
-    images.map((img, idx) => (
-      <div key={idx}>
+    data.map((img) => (
+      <div key={img.id}>
         <Image
-          src={img}
+          src={img.url}
           alt="logo"
           width={80}
           height={30}
@@ -60,86 +70,39 @@ const Swiper = () => {
     <SwiperContainer
       showIndicators={false}
       showStatus={false}
-      showArrows={false}
+      showArrows={false } 
+
       renderThumbs={renderThumbs}
     >
-      <CarouselItem>
-        <Image
-          src="/imgs/img1.png"
-          alt="image1"
-          width={1920}
-          height={1200}
-          style={{
-            maxWidth: "100%",
-            height: "700px",
-            objectFit: "cover",
-            objectPosition: "50% 20%",
-          }}
-        />
-        <Box>
-          <Heading as="h2" size="lg">
-            Final Fantasy XIII
-          </Heading>
-          <Text>
-            The game takes place in the fictional floating world of Cocoon,
-            whose government, the Sanctum, is ordering a purge of civilians who
-            have supposedly come into contact with Pulse, the much-feared world
-            below.{" "}
-          </Text>
-          <Button colorScheme="red">Check Detail</Button>
-        </Box>
-      </CarouselItem>
-      <CarouselItem>
-        <Image
-          src="/imgs/img2.png"
-          alt="image1"
-          width={1920}
-          height={1200}
-          style={{
-            maxWidth: "100%",
-            height: "700px",
-            objectFit: "cover",
-            objectPosition: "50% 50%",
-          }}
-        />
-        <Box>
-          <Heading as="h2" size="lg">
-            Final Fantasy VII Remake
-          </Heading>
-          <Text>
-            It is the first in a planned trilogy of games remaking the 1997
-            PlayStation game Final Fantasy VII.
-          </Text>
-          <Button colorScheme="red">Check Detail</Button>
-        </Box>
-      </CarouselItem>
-      <CarouselItem>
-        <Image
-          src="/imgs/img3.png"
-          alt="image1"
-          width={1920}
-          height={1200}
-          style={{
-            maxWidth: "100%",
-            height: "700px",
-            objectFit: "cover",
-            objectPosition: "50% 50%",
-          }}
-        />
-        <Box>
-          <Heading as="h2" size="lg">
-            Crisis Core: Final Fantasy VII
-          </Heading>
-          <Text>
-            The game primarily focuses on Zack Fair, a young member of the
-            paramilitary organization SOLDIER, who is assigned to look for the
-            missing SOLDIER Genesis Rhapsodos.{" "}
-          </Text>
-          <Button colorScheme="red">Check Detail</Button>
-        </Box>
-      </CarouselItem>
+      {data.map((swiper) => (
+        <CarouselItem key={swiper.id}>
+          <Image
+            src={swiper.url}
+            alt="image1"
+            width={1920}
+            height={1200}
+            style={{
+              maxWidth: "100%",
+              height: "700px",
+              objectFit: "cover",
+              objectPosition: "50% 20%",
+            }}
+          />
+          <Box>
+            <Heading as="h2" size="lg">
+              {swiper.title}
+            </Heading>
+            <Text>{swiper.description}</Text>
+            <Button colorScheme="red">
+              <Link href='/detail/[id]' as={`/detail/${swiper.vid}`}>Check Detail</Link>
+            </Button>
+          </Box>
+        </CarouselItem>
+      ))}
     </SwiperContainer>
   );
 };
 
 export default Swiper;
+
+export const loadSwiper = () => axios.get("/api/swiper", { baseURL });
